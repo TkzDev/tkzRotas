@@ -51,7 +51,7 @@ AddEventHandler("routes:startRoute", function(route, item)
 	currentRoute = route
 	currentPathPosition = 1
     createBlip(config.moduloIniciarRotas[currentRoute].title, config.moduloColetarRotas[currentRoute][currentPathPosition])
-	TriggerEvent("Notify","sucesso","Iniciando rota de <b>"..item.."</b>.",5000)
+	TriggerEvent("Notify","sucesso","Iniciando rota de "..config.modulosRotas[currentRoute].mode.." <b>"..item.."</b>.",5000)
 end)
 Citizen.CreateThread(function()
 	while true do

@@ -9,9 +9,6 @@ vRPclient = Tunnel.getInterface("vRP")
 src = {}
 Tunnel.bindInterface(GetCurrentResourceName(), src)
 -----------------------------------------------------------------------------------------------------------------------------------------
--- VARIABLES
------------------------------------------------------------------------------------------------------------------------------------------
------------------------------------------------------------------------------------------------------------------------------------------
 -- FUNÇÃO DE VERIFICAR PERMISSÃO 
 -----------------------------------------------------------------------------------------------------------------------------------------
 function src.checkPermission(currentRoute,permissao)
@@ -35,22 +32,40 @@ function src.checkPayment(currentRoute, position)
 	local ped = GetPlayerPed(source)
 	if user_id then
 		if src.checkPermission(currentRoute) then
-			for key,value in pairs(config.modulosRotas[currentRoute].itens) do
-				if ((key - 1) == tonumber(position)) then
-					if vRP.getInventoryWeight(user_id) + vRP.getItemWeight(value.item) * parseInt(value.quantidade) <= vRP.getInventoryMaxWeight(user_id) then
-						TriggerClientEvent('cancelando',source,true)
-						TriggerClientEvent("progress",source,10000,"Coletando")
-						TriggerClientEvent("emotes",source,"verificar")
-						FreezeEntityPosition(ped,true)
-						SetTimeout(10000, function()
-							vRPclient._stopAnim(source,false)
-							FreezeEntityPosition(ped,false)
-							TriggerClientEvent('cancelando',source,false)
-							vRP.giveInventoryItem(user_id, value.item, tonumber(value.quantidade))
-							TriggerClientEvent("Notify",source,"sucesso","<b>Você</b> coletou "..value.quantidade.."x "..value.item.." ",8000)
-						end)
-					else
-						TriggerClientEvent("Notify",source,"negado","<b>Mochila</b> cheia.",8000)
+			for k,v in pairs(config.modulosRotas[currentRoute].itens) do
+				if ((k - 1) == tonumber(position)) then
+					if config.modulosRotas[currentRoute].mode == 'coletar' then
+						if vRP.getInventoryWeight(user_id) + vRP.getItemWeight(v.item) * parseInt(v.quantidade) <= vRP.getInventoryMaxWeight(user_id) then
+							TriggerClientEvent('cancelando',source,true)
+							TriggerClientEvent("progress",source,10000,"Coletando")
+							TriggerClientEvent("emotes",source,"verificar")
+							FreezeEntityPosition(ped,true)
+							SetTimeout(10000, function()
+								vRPclient._stopAnim(source,false)
+								FreezeEntityPosition(ped,false)
+								TriggerClientEvent('cancelando',source,false)
+								vRP.giveInventoryItem(user_id, v.item, tonumber(v.quantidade))
+								TriggerClientEvent("Notify",source,"sucesso","<b>Você</b> coletou "..v.quantidade.."x "..v.item.." ",8000)
+							end)
+						else
+							TriggerClientEvent("Notify",source,"negado","<b>Mochila</b> cheia.",8000)
+						end
+					elseif config.modulosRotas[currentRoute].mode == 'entregar' then
+						if vRP.getInventoryItemAmount(user_id,v.item) >= tonumber(v.quantidade) then
+							TriggerClientEvent('cancelando',source,true)
+							TriggerClientEvent("progress",source,10000)
+							TriggerClientEvent("emotes",source,"verificar")
+							FreezeEntityPosition(ped,true)
+							SetTimeout(10000, function()
+								vRPclient._stopAnim(source,false)
+								FreezeEntityPosition(ped,false)
+								TriggerClientEvent('cancelando',source,false)
+								vRP.tryGetInventoryItem(user_id, v.item,tonumber(v.quantidade))
+								TriggerClientEvent("Notify",source,"sucesso","<b>Você</b> entregou "..v.quantidade.."x "..v.item.." ",8000)
+							end)
+						else
+							TriggerClientEvent("Notify",source,"negado","<b>Você não possui esse item na mochila</b>.",8000)
+						end
 					end
 				end
 			end
@@ -71,9 +86,9 @@ AddEventHandler("routes:selectRoute")
 	local source = source
 	local user_id = vRP.getUserId(source)
 		if user_id then
-		for key,value in pairs(config.modulosRotas[currentRoute].itens) do
-			if ((key - 1) == tonumber(position)) then
-				TriggerClientEvent("routes:startRoute", source, currentRoute, value.name)		
+		for k,v in pairs(config.modulosRotas[currentRoute].itens) do
+			if ((k - 1) == tonumber(position)) then
+				TriggerClientEvent("routes:startRoute", source, currentRoute, v.name)		
 			end
 		end
 	end

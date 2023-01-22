@@ -2,6 +2,7 @@ config = {}
 
 config.modulosRotas = {
     ["armas1"] = {
+		['mode'] = 'entregar',
         ['permissao'] = 'armas1.permissao',
 		itens = { 
 			{
