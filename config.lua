@@ -3,6 +3,7 @@ config = {}
 config.modulosRotas = {
     ["armas1"] = {
 		['mode'] = 'entregar', --[ENTREGAR / COLETAR]--
+		['callpolice'] = false,
         ['permissao'] = 'armas1.permissao',
 		itens = { 
 			{

@@ -3,6 +3,7 @@
 -----------------------------------------------------------------------------------------------------------------------------------------
 local Tunnel = module("vrp","lib/Tunnel")
 local Proxy = module("vrp","lib/Proxy")
+local Tools = module("vrp","lib/Tools")
 vRP = Proxy.getInterface("vRP")
 vRPclient = Tunnel.getInterface("vRP")
 
@@ -26,6 +27,8 @@ end
 -----------------------------------------------------------------------------------------------------------------------------------------
 -- FUNÇÃO DE PAGAMENTO 
 -----------------------------------------------------------------------------------------------------------------------------------------
+local blips = {}
+local idgens = Tools.newIDGenerator()
 function src.checkPayment(currentRoute, position)
 	local source = source
 	local user_id = vRP.getUserId(source)
@@ -65,6 +68,26 @@ function src.checkPayment(currentRoute, position)
 							end)
 						else
 							TriggerClientEvent("Notify",source,"negado","<b>Você não possui esse item na mochila</b>.",8000)
+						end
+					end
+				end
+				if config.modulosRotas[currentRoute].callpolice == true then
+					if math.random(100) >= 1 then
+						local source = source
+						local ped = GetPlayerPed(source)
+						local x,y,z = vRPclient.getPosition(source)
+						local policia = vRP.getUsersByPermission("staff.permissao")
+						for l,w in pairs(policia) do
+							local player = vRP.getUserSource(parseInt(w))
+							if player then
+								async(function()
+									local id = idgens:gen()
+									blips[id] = vRPclient.addBlip(player,x,y,z,10,84,"Denuncia Entregas",0.6,false)
+									vRPclient._playSound(player,"CONFIRM_BEEP","HUD_MINI_GAME_SOUNDSET")
+									TriggerClientEvent('chatMessage',player,"911",{64,64,255},"Recebemos uma denuncia de entregas ilicitas, vá até o local para verificar.")
+									SetTimeout(20000,function() vRPclient.removeBlip(player,blips[id]) idgens:free(id) end)
+								end)
+							end
 						end
 					end
 				end
