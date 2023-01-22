@@ -55,7 +55,7 @@ AddEventHandler("routes:startRoute", function(route, item)
 end)
 Citizen.CreateThread(function()
 	while true do
-		local AE = 500
+		local tkz = 500
 
 		for routeCode, route in pairs(config.moduloIniciarRotas) do
 			for k, v in pairs(route.iniciarRota) do
@@ -63,7 +63,7 @@ Citizen.CreateThread(function()
 				local x,y,z = table.unpack(GetEntityCoords(ped))
 				local bowz,cdz = GetGroundZFor_3dCoord(v[1],v[2],v[3])
 				local distance = GetDistanceBetweenCoords(v[1],v[2],cdz,x,y,z,true)
-				AE = 4
+				tkz = 1
 				if distance <= 3.5 then
 					DrawText3D(v[1],v[2],v[3], "~w~PRESSIONE ~r~[E] ~w~PARA ABRIR PAINEL ROTAS")
 					if IsControlJustPressed(0,38) then
@@ -76,20 +76,20 @@ Citizen.CreateThread(function()
 			end
 		end
         
-		Citizen.Wait(AE)
+		Citizen.Wait(tkz)
 	end
 end)
 
 Citizen.CreateThread(function()
 	while true do
-		local AE = 500
+		local tkz = 500
 
 		if currentRoute then
 			local ped = PlayerPedId()
 			local x,y,z = table.unpack(GetEntityCoords(ped))
 			local distance = GetDistanceBetweenCoords(config.moduloColetarRotas[currentRoute][currentPathPosition].x,config.moduloColetarRotas[currentRoute][currentPathPosition].y,config.moduloColetarRotas[currentRoute][currentPathPosition].z,x,y,z,true)
 
-			AE = 4
+			tkz = 1
 			if distance <= 1.5 then
 				DrawText3D(config.moduloColetarRotas[currentRoute][currentPathPosition].x,config.moduloColetarRotas[currentRoute][currentPathPosition].y,config.moduloColetarRotas[currentRoute][currentPathPosition].z, "~w~PRESSIONE ~r~[E] ~w~PARA COLETAR")
 				
@@ -110,7 +110,7 @@ Citizen.CreateThread(function()
 			end
 		end
 
-		Citizen.Wait(AE)
+		Citizen.Wait(tkz)
 	end
 end)
 
