@@ -76,7 +76,7 @@ function src.checkPayment(currentRoute, position)
 						local source = source
 						local ped = GetPlayerPed(source)
 						local x,y,z = vRPclient.getPosition(source)
-						local policia = vRP.getUsersByPermission(config.modulosRotas[currentRoute].permissãopolicia)
+						local policia = vRP.getUsersByPermission(config.modulosRotas[currentRoute].permissaopolicia)
 						for l,w in pairs(policia) do
 							local player = vRP.getUserSource(parseInt(w))
 							if player then

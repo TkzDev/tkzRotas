@@ -4,7 +4,7 @@ config.modulosRotas = {
     ["armas1"] = {
 		['mode'] = 'entregar', --[ENTREGAR / COLETAR]--
 		['callpolice'] = false, --[TRUE - ATIVA / FALSE - DESATIVA]--
-		['permissãopolicia'] = 'policia.permissao', --[PERMISSAO POLICIA CASO ATIVAR OPÇÃO DE CALLPOLICE]--
+		['permissaopolicia'] = 'policia.permissao', --[PERMISSAO POLICIA CASO ATIVAR OPÇÃO DE CALLPOLICE]--
         ['permissao'] = 'armas1.permissao', --[PERMISSAO PARA ABRIR O PAINEL DE ROTAS]--
 		itens = { 
 			{
