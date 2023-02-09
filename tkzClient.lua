@@ -4,15 +4,20 @@ vRP = Proxy.getInterface("vRP")
 
 vSERVER = Tunnel.getInterface(GetCurrentResourceName())
 
+
+---- ---- ---- ---- ---- ------
+---- [[ VARIAVEIS CLIENT ]] ---
+---- ---- ---- ---- ---- ------
 local selectedRoute = nil
 local currentBlip = nil
 local position = 0
 local currentPathPosition = 1
--------------------------------------------------------------------------------------------------
---[ MENU ]---------------------------------------------------------------------------------------
--------------------------------------------------------------------------------------------------
 local menuactive = false
 
+
+---- ---- ---- ---- ---- --------
+---- [[ MENU ACTIVE CLIENT ]] ---
+---- ---- ---- ---- ---- --------
 function ToggleActionMenu()
 	menuactive = not menuactive
     if menuactive then
@@ -23,13 +28,13 @@ function ToggleActionMenu()
 		SendNUIMessage({ action = "exit" })
 	end
 end
--------------------------------------------------------------------------------------------------
---[ BOTÕES ]-------------------------------------------------------------------------------------
--------------------------------------------------------------------------------------------------
+---- ---- ---- ---- ---- ------
+---- [[ BUTTONS CLIENT ]] -----
+---- ---- ---- ---- ---- ------
 RegisterNUICallback("selectRoute", function(data,cb)
     if data.code then
 			position = data.code
-	    TriggerServerEvent("routes:selectRoute", selectedRoute, data.code)
+	    TriggerServerEvent("tkzRotas:selectRoute", selectedRoute, data.code)
     end
 end)
 
@@ -37,13 +42,13 @@ RegisterNUICallback("exit", function(data,cb)
     ToggleActionMenu()
 end)
 
-RegisterNetEvent("routes:exit")
-AddEventHandler("routes:exit", function()
+RegisterNetEvent("tkzRotas:exit")
+AddEventHandler("tkzRotas:exit", function()
 	ToggleActionMenu()
 end)
 
-RegisterNetEvent("routes:startRoute")
-AddEventHandler("routes:startRoute", function(route, item)
+RegisterNetEvent("tkzRotas:startRoute")
+AddEventHandler("tkzRotas:startRoute", function(route, item)
     if currentBlip then
 			RemoveBlip(currentBlip)
 	end
@@ -53,6 +58,10 @@ AddEventHandler("routes:startRoute", function(route, item)
     createBlip(config.moduloIniciarRotas[selectedRoute].title, config.moduloColetarRotas[selectedRoute][currentPathPosition])
 	TriggerEvent("Notify","sucesso","Iniciando rota de "..config.modulosRotas[selectedRoute].mode.." <b>"..item.."</b>.",5000)
 end)
+
+---- ---- ---- ---- ---- ------
+---- [[ THREADS CLIENT ]] ---
+---- ---- ---- ---- ---- ------
 Citizen.CreateThread(function()
 	while true do
 		local tkz = 500
@@ -114,10 +123,6 @@ Citizen.CreateThread(function()
 	end
 end)
 
-
------------------------------------------------------------------------------------------------------------------------------------------
--- THREAD PARA CRIAR O PED
------------------------------------------------------------------------------------------------------------------------------------------
 Citizen.CreateThread(function()
 	for routeCode, route in pairs(config.moduloIniciarRotas) do
 		for k, v in pairs(route.iniciarRota) do
@@ -133,9 +138,6 @@ Citizen.CreateThread(function()
 	end
 end)
 
------------------------------------------------------------------------------------------------------------------------------------------
--- THREAD PARA ENCERRAR A ROTA
------------------------------------------------------------------------------------------------------------------------------------------
 Citizen.CreateThread(function()
 	while true do
 		Citizen.Wait(5)
@@ -145,15 +147,16 @@ Citizen.CreateThread(function()
 				selectedRoute = nil
 				currentPathPosition = 1
 				RemoveBlip(currentBlip)
-				TriggerServerEvent("routes:endRoute")
+				TriggerServerEvent("tkzRotas:endRoute")
 				TriggerEvent("Notify","negado","Rota encerrada",10000)
 			end
 		end
 	end
 end)
--------------------------------------------------------------------------------------------------
---[ FUNÇÃO ]-------------------------------------------------------------------------------------
--------------------------------------------------------------------------------------------------
+
+---- ---- ---- ---- ---- ------
+---- [[ DRAWTXT CLIENT ]] ----
+---- ---- ---- ---- ---- ------
 function DrawText3D(x,y,z,text)
     local onScreen,_x,_y=World3dToScreen2d(x,y,z)
     local px,py,pz=table.unpack(GetGameplayCamCoords())

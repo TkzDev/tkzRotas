@@ -9,9 +9,18 @@ vRPclient = Tunnel.getInterface("vRP")
 
 src = {}
 Tunnel.bindInterface(GetCurrentResourceName(), src)
------------------------------------------------------------------------------------------------------------------------------------------
--- FUNÇÃO DE VERIFICAR PERMISSÃO 
------------------------------------------------------------------------------------------------------------------------------------------
+
+---- ---- ---- ---- ---- ------
+---- [[ VARIAVEIS SERVER ]] ---
+---- ---- ---- ---- ---- ------
+
+local blips = {}
+local idgens = Tools.newIDGenerator()
+
+---- ---- ---- ---- ---- ------
+---- [[ FUNCTIONS SERVER ]] ---
+---- ---- ---- ---- ---- ------
+
 function src.checkPermission(selectedRoute,permissao)
 	local source = source
 	local user_id = vRP.getUserId(source)
@@ -24,11 +33,7 @@ function src.checkPermission(selectedRoute,permissao)
 		end
 	end
 end
------------------------------------------------------------------------------------------------------------------------------------------
--- FUNÇÃO DE PAGAMENTO 
------------------------------------------------------------------------------------------------------------------------------------------
-local blips = {}
-local idgens = Tools.newIDGenerator()
+
 function src.checkPayment(selectedRoute, position)
 	local source = source
 	local user_id = vRP.getUserId(source)
@@ -95,23 +100,23 @@ function src.checkPayment(selectedRoute, position)
 		end
 	end
 end
------------------------------------------------------------------------------------------------------------------------------------------
--- FUNÇÃO QUE RETORNA OS ITENS DO CONFIG.LUA
------------------------------------------------------------------------------------------------------------------------------------------
+
 function src.getItems(routes)
 	return config.modulosRotas[routes].itens
 end
------------------------------------------------------------------------------------------------------------------------------------------
--- FUNÇÃO PARA SELECIONAR A ROTA DO CONFIG.LUA
------------------------------------------------------------------------------------------------------------------------------------------
-RegisterNetEvent("routes:selectRoute", function(selectedRoute, position)
-AddEventHandler("routes:selectRoute")
+
+---- ---- ---- ---- ---- ----
+---- [[ EVENTS SERVER ]] ----
+---- ---- ---- ---- ---- ----
+
+RegisterNetEvent("tkzRotasselectRoute", function(selectedRoute, position)
+AddEventHandler("tkzRotasselectRoute")
 	local source = source
 	local user_id = vRP.getUserId(source)
 		if user_id then
 		for k,v in pairs(config.modulosRotas[selectedRoute].itens) do
 			if ((k - 1) == tonumber(position)) then
-				TriggerClientEvent("routes:startRoute", source, selectedRoute, v.name)		
+				TriggerClientEvent("tkzRotasstartRoute", source, selectedRoute, v.name)		
 			end
 		end
 	end
