@@ -8,7 +8,7 @@ vSERVER = Tunnel.getInterface(GetCurrentResourceName())
 ---- ---- ---- ---- ---- ------
 ---- [[ VARIAVEIS CLIENT ]] ---
 ---- ---- ---- ---- ---- ------
-local selectedRoute = nil
+local currentRoute = nil
 local currentBlip = nil
 local position = 0
 local currentPathPosition = 1
@@ -22,19 +22,30 @@ function ToggleActionMenu()
 	menuactive = not menuactive
     if menuactive then
 		SetNuiFocus(true,true)
-		SendNUIMessage({ action = "open", title = "Rotas para "..config.moduloIniciarRotas[selectedRoute].title, items = vSERVER.getItems(selectedRoute) })
+		SendNUIMessage({ action = "open", title = "Rotas para "..config.moduloIniciarRotas[currentRoute].title, items = vSERVER.getItems(currentRoute) })
     else
 		SetNuiFocus(false)
 		SendNUIMessage({ action = "exit" })
 	end
 end
+
+RegisterCommand("a", function(_, args, rawCommand)
+	menuactive = not menuactive
+    if menuactive then
+		SetNuiFocus(true,true)
+		SendNUIMessage({ action = "open", title = "Rotas para "..config.moduloIniciarRotas[currentRoute].title, items = vSERVER.getItems(currentRoute) })
+    else
+		SetNuiFocus(false)
+		SendNUIMessage({ action = "exit" })
+	end
+end)
 ---- ---- ---- ---- ---- ------
 ---- [[ BUTTONS CLIENT ]] -----
 ---- ---- ---- ---- ---- ------
 RegisterNUICallback("selectRoute", function(data,cb)
     if data.code then
 			position = data.code
-	    TriggerServerEvent("tkzRotas:selectRoute", selectedRoute, data.code)
+	    TriggerServerEvent("tkzRotas:selectRoute", currentRoute, data.code)
     end
 end)
 
@@ -48,17 +59,17 @@ AddEventHandler("tkzRotas:exit", function()
 end)
 
 RegisterNetEvent("tkzRotas:startRoute")
-AddEventHandler("tkzRotas:startRoute", function(route, item)
-    if currentBlip then
+AddEventHandler("tkzRotas:startRoute", function(route, item, mode)
+	if currentBlip then
 			RemoveBlip(currentBlip)
 	end
 
-	selectedRoute = route
+	currentRoute = route
 	currentPathPosition = 1
-    createBlip(config.moduloIniciarRotas[selectedRoute].title, config.moduloColetarRotas[selectedRoute][currentPathPosition])
-	TriggerEvent("Notify","sucesso","Iniciando rota de "..config.modulosRotas[selectedRoute].mode.." <b>"..item.."</b>.",5000)
+	createBlip(config.moduloIniciarRotas[currentRoute].title, config.moduloColetarRotas[currentRoute][currentPathPosition])
+	-- TriggerEvent("Notify","sucesso","Iniciando rota de "..mode.." <b>"..item.."</b>.",5000)
+	TriggerEvent(config.moduloNotify['startRoute']['event'],config.moduloNotify['startRoute']['type'],config.moduloNotify['startRoute']['message'],5000)
 end)
-
 ---- ---- ---- ---- ---- ------
 ---- [[ THREADS CLIENT ]] ---
 ---- ---- ---- ---- ---- ------
@@ -74,10 +85,10 @@ Citizen.CreateThread(function()
 				local distance = GetDistanceBetweenCoords(v[1],v[2],cdz,x,y,z,true)
 				tkz = 1
 				if distance <= 3.5 then
-					DrawText3D(v[1],v[2],v[3], "~w~PRESSIONE ~r~[E] ~w~PARA ABRIR PAINEL ROTAS")
+					DrawText3D(v[1],v[2],v[3], "~g~[E] ~w~PARA ABRIR PAINEL ~g~ROTAS")
 					if IsControlJustPressed(0,38) then
 						if vSERVER.checkPermission(routeCode) then
-							selectedRoute = routeCode
+							currentRoute = routeCode
 							ToggleActionMenu()
 						end
 					end
@@ -93,18 +104,18 @@ Citizen.CreateThread(function()
 	while true do
 		local tkz = 500
 
-		if selectedRoute then
+		if currentRoute then
 			local ped = PlayerPedId()
 			local x,y,z = table.unpack(GetEntityCoords(ped))
-			local distance = GetDistanceBetweenCoords(config.moduloColetarRotas[selectedRoute][currentPathPosition].x,config.moduloColetarRotas[selectedRoute][currentPathPosition].y,config.moduloColetarRotas[selectedRoute][currentPathPosition].z,x,y,z,true)
+			local distance = GetDistanceBetweenCoords(config.moduloColetarRotas[currentRoute][currentPathPosition].x,config.moduloColetarRotas[currentRoute][currentPathPosition].y,config.moduloColetarRotas[currentRoute][currentPathPosition].z,x,y,z,true)
 
 			tkz = 1
 			if distance <= 1.5 then
-				DrawText3D(config.moduloColetarRotas[selectedRoute][currentPathPosition].x,config.moduloColetarRotas[selectedRoute][currentPathPosition].y,config.moduloColetarRotas[selectedRoute][currentPathPosition].z, "~w~PRESSIONE ~r~[E] ~w~PARA COLETAR")
+				DrawText3D(config.moduloColetarRotas[currentRoute][currentPathPosition].x,config.moduloColetarRotas[currentRoute][currentPathPosition].y,config.moduloColetarRotas[currentRoute][currentPathPosition].z, "~w~PRESSIONE ~r~[E] ~w~PARA COLETAR")
 				
 				if not IsPedInAnyVehicle(ped) then
 					if IsControlJustPressed(0,38) then
-						vSERVER.checkPayment(selectedRoute, position)
+						vSERVER.checkPayment(currentRoute, position)
 												
 						RemoveBlip(currentBlip)
 						currentPathPosition = currentPathPosition + 1
@@ -113,7 +124,7 @@ Citizen.CreateThread(function()
 							currentPathPosition = 1
 						end
 
-						createBlip(config.moduloIniciarRotas[selectedRoute].title, config.moduloColetarRotas[selectedRoute][currentPathPosition])
+						createBlip(config.moduloIniciarRotas[currentRoute].title, config.moduloColetarRotas[currentRoute][currentPathPosition])
 					end
 				end
 			end
@@ -141,10 +152,10 @@ end)
 Citizen.CreateThread(function()
 	while true do
 		Citizen.Wait(5)
-		if selectedRoute then
-			drawTxt("~w~PRESSIONE ~r~[F7] ~w~PARA FINALIZAR A ROTA",4,0.2,0.93,0.50,255,255,255,180)
+		if currentRoute then
+			drawTxt("~g~[F7] ~w~PARA FINALIZAR A ROTA",4,0.2,0.93,0.39,255,255,255,180)
 			if IsControlJustPressed(0, 168) then
-				selectedRoute = nil
+				currentRoute = nil
 				currentPathPosition = 1
 				RemoveBlip(currentBlip)
 				TriggerServerEvent("tkzRotas:endRoute")
@@ -168,8 +179,6 @@ function DrawText3D(x,y,z,text)
     SetTextCentre(1)
     AddTextComponentString(text)
     DrawText(_x,_y)
-    local factor = (string.len(text)) / 370
-    DrawRect(_x,_y+0.0125, 0.005+ factor, 0.03, 41, 11, 41, 68)
 end
 
 function drawTxt(text,font,x,y,scale,r,g,b,a)
@@ -186,7 +195,7 @@ end
 function createBlip(title, pos)
 	currentBlip = AddBlipForCoord(pos.x, pos.y, pos.z)
 	SetBlipSprite(currentBlip,12)
-	SetBlipColour(currentBlip,1)
+	SetBlipColour(currentBlip,2)
 	SetBlipScale(currentBlip,0.9)
 	SetBlipAsShortRange(currentBlip,false)
 	SetBlipRoute(currentBlip,true)

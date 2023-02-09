@@ -2,31 +2,41 @@ config = {}
 
 config.modulosRotas = {
     ["armas1"] = {
-		['mode'] = 'entregar', --[ENTREGAR / COLETAR]--
+		-- ['mode'] = 'entregar', --[ENTREGAR / COLETAR]--
 		['callpolice'] = false, --[TRUE - ATIVA / FALSE - DESATIVA]--
 		['permissaopolicia'] = 'policia.permissao', --[PERMISSAO POLICIA CASO ATIVAR OPÇÃO DE CALLPOLICE]--
-        ['permissao'] = 'armas1.permissao', --[PERMISSAO PARA ABRIR O PAINEL DE ROTAS]--
+        ['permissao'] = 'admin.permissao', --[PERMISSAO PARA ABRIR O PAINEL DE ROTAS]--
 		itens = { 
 			{
 				name = "Celular",
+				mode = 'entregar',
+				avisarpolicia = '100%',
 				image = "celular",
 				quantidade = 1,
 				item = "celular"
 			},
 			{
 				name = "Radio",
+				mode = 'Coletar',
+				avisarpolicia = '0%',
 				image = "radio",
 				quantidade = 1,
 				item = "radio"
 			},
 			{
 				name = "Cordas",
+				mode = 'Coletar',
+				avisarpolicia = '0%',
 				image = "cordas",
 				quantidade = 1,
 				item = "cordas"
 			}
 		}
 	}
+}
+
+config.moduloNotify = {
+	['startRoute'] = { ['event'] = 'Notify', ['type'] = 'sucesso', ['message'] = "Você iniciou a rota"}
 }
 
 config.moduloIniciarRotas = {

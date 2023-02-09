@@ -18,11 +18,11 @@ local idgens = Tools.newIDGenerator()
 ---- [[ FUNCTIONS SERVER ]] ---
 ---- ---- ---- ---- ---- ------
 
-function src.checkPermission(selectedRoute,permissao)
+function src.checkPermission(currentRoute,permissao)
 	local source = source
 	local user_id = vRP.getUserId(source)
 	if user_id then
-		if vRP.hasPermission(user_id,config.modulosRotas[selectedRoute].permissao) then
+		if vRP.hasPermission(user_id,config.modulosRotas[currentRoute].permissao) then
 			return true
 		else
 			TriggerClientEvent("Notify",source,"negado","Você não possui acesso.")
@@ -31,15 +31,15 @@ function src.checkPermission(selectedRoute,permissao)
 	end
 end
 
-function src.checkPayment(selectedRoute, position)
+function src.checkPayment(currentRoute, position)
 	local source = source
 	local user_id = vRP.getUserId(source)
 	local ped = GetPlayerPed(source)
 	if user_id then
-		if src.checkPermission(selectedRoute) then
-			for k,v in pairs(config.modulosRotas[selectedRoute].itens) do
+		if src.checkPermission(currentRoute) then
+			for k,v in pairs(config.modulosRotas[currentRoute].itens) do
 				if ((k - 1) == tonumber(position)) then
-					if config.modulosRotas[selectedRoute].mode == 'coletar' then
+					if config.modulosRotas[currentRoute].itens == 'coletar' then
 						if vRP.getInventoryWeight(user_id) + vRP.getItemWeight(v.item) * parseInt(v.quantidade) <= vRP.getInventoryMaxWeight(user_id) then
 							TriggerClientEvent('cancelando',source,true)
 							TriggerClientEvent("progress",source,10000,"Coletando")
@@ -55,7 +55,7 @@ function src.checkPayment(selectedRoute, position)
 						else
 							TriggerClientEvent("Notify",source,"negado","<b>Mochila</b> cheia.",8000)
 						end
-					elseif config.modulosRotas[selectedRoute].mode == 'entregar' then
+					elseif config.modulosRotas[currentRoute].itens == 'entregar' then
 						if vRP.getInventoryItemAmount(user_id,v.item) >= tonumber(v.quantidade) then
 							TriggerClientEvent('cancelando',source,true)
 							TriggerClientEvent("progress",source,10000)
@@ -73,12 +73,12 @@ function src.checkPayment(selectedRoute, position)
 						end
 					end
 				end
-				if config.modulosRotas[selectedRoute].callpolice == true then
+				if config.modulosRotas[currentRoute].callpolice == true then
 					if math.random(100) >= 1 then
 						local source = source
 						local ped = GetPlayerPed(source)
 						local x,y,z = vRPclient.getPosition(source)
-						local policia = vRP.getUsersByPermission(config.modulosRotas[selectedRoute].permissaopolicia)
+						local policia = vRP.getUsersByPermission(config.modulosRotas[currentRoute].permissaopolicia)
 						for l,w in pairs(policia) do
 							local player = vRP.getUserSource(parseInt(w))
 							if player then
@@ -106,14 +106,14 @@ end
 ---- [[ EVENTS SERVER ]] ----
 ---- ---- ---- ---- ---- ----
 
-RegisterNetEvent("tkzRotasselectRoute", function(selectedRoute, position)
-AddEventHandler("tkzRotasselectRoute")
+RegisterNetEvent("tkzRotas:selectRoute", function(currentRoute, position)
+AddEventHandler("tkzRotas:selectRoute")
 	local source = source
 	local user_id = vRP.getUserId(source)
 		if user_id then
-		for k,v in pairs(config.modulosRotas[selectedRoute].itens) do
+		for k,v in pairs(config.modulosRotas[currentRoute].itens) do
 			if ((k - 1) == tonumber(position)) then
-				TriggerClientEvent("tkzRotasstartRoute", source, selectedRoute, v.name)		
+				TriggerClientEvent("tkzRotas:startRoute", source, currentRoute, v.name, v.mode)		
 			end
 		end
 	end
