@@ -12,11 +12,11 @@ Tunnel.bindInterface(GetCurrentResourceName(), src)
 -----------------------------------------------------------------------------------------------------------------------------------------
 -- FUNÇÃO DE VERIFICAR PERMISSÃO 
 -----------------------------------------------------------------------------------------------------------------------------------------
-function src.checkPermission(currentRoute,permissao)
+function src.checkPermission(selectedRoute,permissao)
 	local source = source
 	local user_id = vRP.getUserId(source)
 	if user_id then
-		if vRP.hasPermission(user_id,config.modulosRotas[currentRoute].permissao) then
+		if vRP.hasPermission(user_id,config.modulosRotas[selectedRoute].permissao) then
 			return true
 		else
 			TriggerClientEvent("Notify",source,"negado","Você não possui acesso.")
@@ -29,15 +29,15 @@ end
 -----------------------------------------------------------------------------------------------------------------------------------------
 local blips = {}
 local idgens = Tools.newIDGenerator()
-function src.checkPayment(currentRoute, position)
+function src.checkPayment(selectedRoute, position)
 	local source = source
 	local user_id = vRP.getUserId(source)
 	local ped = GetPlayerPed(source)
 	if user_id then
-		if src.checkPermission(currentRoute) then
-			for k,v in pairs(config.modulosRotas[currentRoute].itens) do
+		if src.checkPermission(selectedRoute) then
+			for k,v in pairs(config.modulosRotas[selectedRoute].itens) do
 				if ((k - 1) == tonumber(position)) then
-					if config.modulosRotas[currentRoute].mode == 'coletar' then
+					if config.modulosRotas[selectedRoute].mode == 'coletar' then
 						if vRP.getInventoryWeight(user_id) + vRP.getItemWeight(v.item) * parseInt(v.quantidade) <= vRP.getInventoryMaxWeight(user_id) then
 							TriggerClientEvent('cancelando',source,true)
 							TriggerClientEvent("progress",source,10000,"Coletando")
@@ -53,7 +53,7 @@ function src.checkPayment(currentRoute, position)
 						else
 							TriggerClientEvent("Notify",source,"negado","<b>Mochila</b> cheia.",8000)
 						end
-					elseif config.modulosRotas[currentRoute].mode == 'entregar' then
+					elseif config.modulosRotas[selectedRoute].mode == 'entregar' then
 						if vRP.getInventoryItemAmount(user_id,v.item) >= tonumber(v.quantidade) then
 							TriggerClientEvent('cancelando',source,true)
 							TriggerClientEvent("progress",source,10000)
@@ -71,12 +71,12 @@ function src.checkPayment(currentRoute, position)
 						end
 					end
 				end
-				if config.modulosRotas[currentRoute].callpolice == true then
+				if config.modulosRotas[selectedRoute].callpolice == true then
 					if math.random(100) >= 1 then
 						local source = source
 						local ped = GetPlayerPed(source)
 						local x,y,z = vRPclient.getPosition(source)
-						local policia = vRP.getUsersByPermission(config.modulosRotas[currentRoute].permissaopolicia)
+						local policia = vRP.getUsersByPermission(config.modulosRotas[selectedRoute].permissaopolicia)
 						for l,w in pairs(policia) do
 							local player = vRP.getUserSource(parseInt(w))
 							if player then
@@ -104,14 +104,14 @@ end
 -----------------------------------------------------------------------------------------------------------------------------------------
 -- FUNÇÃO PARA SELECIONAR A ROTA DO CONFIG.LUA
 -----------------------------------------------------------------------------------------------------------------------------------------
-RegisterNetEvent("routes:selectRoute", function(currentRoute, position)
+RegisterNetEvent("routes:selectRoute", function(selectedRoute, position)
 AddEventHandler("routes:selectRoute")
 	local source = source
 	local user_id = vRP.getUserId(source)
 		if user_id then
-		for k,v in pairs(config.modulosRotas[currentRoute].itens) do
+		for k,v in pairs(config.modulosRotas[selectedRoute].itens) do
 			if ((k - 1) == tonumber(position)) then
-				TriggerClientEvent("routes:startRoute", source, currentRoute, v.name)		
+				TriggerClientEvent("routes:startRoute", source, selectedRoute, v.name)		
 			end
 		end
 	end

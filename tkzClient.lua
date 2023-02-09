@@ -4,7 +4,7 @@ vRP = Proxy.getInterface("vRP")
 
 vSERVER = Tunnel.getInterface(GetCurrentResourceName())
 
-local currentRoute = nil
+local selectedRoute = nil
 local currentBlip = nil
 local position = 0
 local currentPathPosition = 1
@@ -17,7 +17,7 @@ function ToggleActionMenu()
 	menuactive = not menuactive
     if menuactive then
 		SetNuiFocus(true,true)
-		SendNUIMessage({ action = "open", title = "Rotas para "..config.moduloIniciarRotas[currentRoute].title, items = vSERVER.getItems(currentRoute) })
+		SendNUIMessage({ action = "open", title = "Rotas para "..config.moduloIniciarRotas[selectedRoute].title, items = vSERVER.getItems(selectedRoute) })
     else
 		SetNuiFocus(false)
 		SendNUIMessage({ action = "exit" })
@@ -29,7 +29,7 @@ end
 RegisterNUICallback("selectRoute", function(data,cb)
     if data.code then
 			position = data.code
-	    TriggerServerEvent("routes:selectRoute", currentRoute, data.code)
+	    TriggerServerEvent("routes:selectRoute", selectedRoute, data.code)
     end
 end)
 
@@ -48,10 +48,10 @@ AddEventHandler("routes:startRoute", function(route, item)
 			RemoveBlip(currentBlip)
 	end
 
-	currentRoute = route
+	selectedRoute = route
 	currentPathPosition = 1
-    createBlip(config.moduloIniciarRotas[currentRoute].title, config.moduloColetarRotas[currentRoute][currentPathPosition])
-	TriggerEvent("Notify","sucesso","Iniciando rota de "..config.modulosRotas[currentRoute].mode.." <b>"..item.."</b>.",5000)
+    createBlip(config.moduloIniciarRotas[selectedRoute].title, config.moduloColetarRotas[selectedRoute][currentPathPosition])
+	TriggerEvent("Notify","sucesso","Iniciando rota de "..config.modulosRotas[selectedRoute].mode.." <b>"..item.."</b>.",5000)
 end)
 Citizen.CreateThread(function()
 	while true do
@@ -68,7 +68,7 @@ Citizen.CreateThread(function()
 					DrawText3D(v[1],v[2],v[3], "~w~PRESSIONE ~r~[E] ~w~PARA ABRIR PAINEL ROTAS")
 					if IsControlJustPressed(0,38) then
 						if vSERVER.checkPermission(routeCode) then
-							currentRoute = routeCode
+							selectedRoute = routeCode
 							ToggleActionMenu()
 						end
 					end
@@ -84,18 +84,18 @@ Citizen.CreateThread(function()
 	while true do
 		local tkz = 500
 
-		if currentRoute then
+		if selectedRoute then
 			local ped = PlayerPedId()
 			local x,y,z = table.unpack(GetEntityCoords(ped))
-			local distance = GetDistanceBetweenCoords(config.moduloColetarRotas[currentRoute][currentPathPosition].x,config.moduloColetarRotas[currentRoute][currentPathPosition].y,config.moduloColetarRotas[currentRoute][currentPathPosition].z,x,y,z,true)
+			local distance = GetDistanceBetweenCoords(config.moduloColetarRotas[selectedRoute][currentPathPosition].x,config.moduloColetarRotas[selectedRoute][currentPathPosition].y,config.moduloColetarRotas[selectedRoute][currentPathPosition].z,x,y,z,true)
 
 			tkz = 1
 			if distance <= 1.5 then
-				DrawText3D(config.moduloColetarRotas[currentRoute][currentPathPosition].x,config.moduloColetarRotas[currentRoute][currentPathPosition].y,config.moduloColetarRotas[currentRoute][currentPathPosition].z, "~w~PRESSIONE ~r~[E] ~w~PARA COLETAR")
+				DrawText3D(config.moduloColetarRotas[selectedRoute][currentPathPosition].x,config.moduloColetarRotas[selectedRoute][currentPathPosition].y,config.moduloColetarRotas[selectedRoute][currentPathPosition].z, "~w~PRESSIONE ~r~[E] ~w~PARA COLETAR")
 				
 				if not IsPedInAnyVehicle(ped) then
 					if IsControlJustPressed(0,38) then
-						vSERVER.checkPayment(currentRoute, position)
+						vSERVER.checkPayment(selectedRoute, position)
 												
 						RemoveBlip(currentBlip)
 						currentPathPosition = currentPathPosition + 1
@@ -104,7 +104,7 @@ Citizen.CreateThread(function()
 							currentPathPosition = 1
 						end
 
-						createBlip(config.moduloIniciarRotas[currentRoute].title, config.moduloColetarRotas[currentRoute][currentPathPosition])
+						createBlip(config.moduloIniciarRotas[selectedRoute].title, config.moduloColetarRotas[selectedRoute][currentPathPosition])
 					end
 				end
 			end
@@ -139,10 +139,10 @@ end)
 Citizen.CreateThread(function()
 	while true do
 		Citizen.Wait(5)
-		if currentRoute then
+		if selectedRoute then
 			drawTxt("~w~PRESSIONE ~r~[F7] ~w~PARA FINALIZAR A ROTA",4,0.2,0.93,0.50,255,255,255,180)
 			if IsControlJustPressed(0, 168) then
-				currentRoute = nil
+				selectedRoute = nil
 				currentPathPosition = 1
 				RemoveBlip(currentBlip)
 				TriggerServerEvent("routes:endRoute")
