@@ -118,3 +118,6 @@ AddEventHandler("tkzRotas:selectRoute")
 		end
 	end
 end)
+
+
+print("^1Script ["..GetCurrentResourceName().."] ^5 Successfully Loaded")

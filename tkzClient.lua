@@ -28,17 +28,6 @@ function ToggleActionMenu()
 		SendNUIMessage({ action = "exit" })
 	end
 end
-
-RegisterCommand("a", function(_, args, rawCommand)
-	menuactive = not menuactive
-    if menuactive then
-		SetNuiFocus(true,true)
-		SendNUIMessage({ action = "open", title = "Rotas para "..config.moduloIniciarRotas[currentRoute].title, items = vSERVER.getItems(currentRoute) })
-    else
-		SetNuiFocus(false)
-		SendNUIMessage({ action = "exit" })
-	end
-end)
 ---- ---- ---- ---- ---- ------
 ---- [[ BUTTONS CLIENT ]] -----
 ---- ---- ---- ---- ---- ------
@@ -67,7 +56,6 @@ AddEventHandler("tkzRotas:startRoute", function(route, item, mode)
 	currentRoute = route
 	currentPathPosition = 1
 	createBlip(config.moduloIniciarRotas[currentRoute].title, config.moduloColetarRotas[currentRoute][currentPathPosition])
-	-- TriggerEvent("Notify","sucesso","Iniciando rota de "..mode.." <b>"..item.."</b>.",5000)
 	TriggerEvent(config.moduloNotify['startRoute']['event'],config.moduloNotify['startRoute']['type'],config.moduloNotify['startRoute']['message'],5000)
 end)
 ---- ---- ---- ---- ---- ------
@@ -75,7 +63,7 @@ end)
 ---- ---- ---- ---- ---- ------
 Citizen.CreateThread(function()
 	while true do
-		local tkz = 500
+		local tkzOtmz = 1000
 
 		for routeCode, route in pairs(config.moduloIniciarRotas) do
 			for k, v in pairs(route.iniciarRota) do
@@ -83,9 +71,9 @@ Citizen.CreateThread(function()
 				local x,y,z = table.unpack(GetEntityCoords(ped))
 				local bowz,cdz = GetGroundZFor_3dCoord(v[1],v[2],v[3])
 				local distance = GetDistanceBetweenCoords(v[1],v[2],cdz,x,y,z,true)
-				tkz = 1
-				if distance <= 3.5 then
-					DrawText3D(v[1],v[2],v[3], "~g~[E] ~w~PARA ABRIR PAINEL ~g~ROTAS")
+				tkzOtmz = 1
+				if distance <= 2.5 then
+					DrawText3D(v[1],v[2],v[3], "~b~[E] ~w~PARA ABRIR PAINEL ~b~ROTAS")
 					if IsControlJustPressed(0,38) then
 						if vSERVER.checkPermission(routeCode) then
 							currentRoute = routeCode
@@ -96,20 +84,20 @@ Citizen.CreateThread(function()
 			end
 		end
         
-		Citizen.Wait(tkz)
+		Citizen.Wait(tkzOtmz)
 	end
 end)
 
 Citizen.CreateThread(function()
 	while true do
-		local tkz = 500
+		local tkzOtmz = 1000
 
 		if currentRoute then
 			local ped = PlayerPedId()
 			local x,y,z = table.unpack(GetEntityCoords(ped))
 			local distance = GetDistanceBetweenCoords(config.moduloColetarRotas[currentRoute][currentPathPosition].x,config.moduloColetarRotas[currentRoute][currentPathPosition].y,config.moduloColetarRotas[currentRoute][currentPathPosition].z,x,y,z,true)
 
-			tkz = 1
+			tkzOtmz = 1
 			if distance <= 1.5 then
 				DrawText3D(config.moduloColetarRotas[currentRoute][currentPathPosition].x,config.moduloColetarRotas[currentRoute][currentPathPosition].y,config.moduloColetarRotas[currentRoute][currentPathPosition].z, "~w~PRESSIONE ~r~[E] ~w~PARA COLETAR")
 				
@@ -130,7 +118,7 @@ Citizen.CreateThread(function()
 			end
 		end
 
-		Citizen.Wait(tkz)
+		Citizen.Wait(tkzOtmz)
 	end
 end)
 
@@ -151,9 +139,10 @@ end)
 
 Citizen.CreateThread(function()
 	while true do
-		Citizen.Wait(5)
+		local tkzOtmz = 1000
 		if currentRoute then
-			drawTxt("~g~[F7] ~w~PARA FINALIZAR A ROTA",4,0.2,0.93,0.39,255,255,255,180)
+			tkzOtmz = 1
+			drawTxt("~b~[F7] ~w~PARA FINALIZAR A ROTA",4,0.2,0.93,0.39,255,255,255,180)
 			if IsControlJustPressed(0, 168) then
 				currentRoute = nil
 				currentPathPosition = 1
@@ -162,6 +151,7 @@ Citizen.CreateThread(function()
 				TriggerEvent("Notify","negado","Rota encerrada",10000)
 			end
 		end
+		Citizen.Wait(tkzOtmz)
 	end
 end)
 
@@ -203,3 +193,6 @@ function createBlip(title, pos)
 	AddTextComponentString("Rotas de "..title)
 	EndTextCommandSetBlipName(currentBlip)
 end
+
+
+print("^5Script ["..GetCurrentResourceName().."] ^2 Successfully Loaded")
