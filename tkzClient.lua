@@ -99,7 +99,7 @@ Citizen.CreateThread(function()
 
 			tkzOtmz = 1
 			if distance <= 1.5 then
-				DrawText3D(config.moduloColetarRotas[currentRoute][currentPathPosition].x,config.moduloColetarRotas[currentRoute][currentPathPosition].y,config.moduloColetarRotas[currentRoute][currentPathPosition].z, "~w~PRESSIONE ~r~[E] ~w~PARA COLETAR")
+				DrawText3D(config.moduloColetarRotas[currentRoute][currentPathPosition].x,config.moduloColetarRotas[currentRoute][currentPathPosition].y,config.moduloColetarRotas[currentRoute][currentPathPosition].z, "~b~[E] ~w~PARA ~b~COLETAR")
 				
 				if not IsPedInAnyVehicle(ped) then
 					if IsControlJustPressed(0,38) then
