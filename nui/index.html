@@ -1,32 +1,46 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="UTF-8">
     <script src="nui://game/ui/jquery.js"></script>
-	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;300;400;500;700&display=swap" rel="stylesheet">
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"
+        integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;300;400;500;700&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v6.0.0-beta3/css/all.css">
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body style="display:none">
-    <main>
-        <header>
-            <div class="icon"><i class="fa-solid fa-globe"></i></div>
-            <div class="text">
-                <small>Itens</small>
-                <span>Rotas</span>
+    <div class="container">
+        <div class="box">
+            <div class="detalhe"></div>
+            <div onclick="Main.exit()" class="close">
+                <i class="fa-solid fa-xmark"></i>
             </div>
-        </header>
-        <section>
-            <div class="allcontent">
-                <div class="revert items-container" style="direction:ltr"></div>
+            <div class="header">
+                <h1>ROTAS</h1>
+                <p>SELECIONE UMA ROTA</p>
             </div>
-            <footer class="flexAlign">
-                <button onclick="Main.exit()"> <i class="fa-sharp fa-solid fa-circle-xmark"></i> Fechar</button>
-                <button onclick="Main.startRoute()"> <i class="fa-solid fa-circle-check"></i> Confirmar</button>
-            </footer>
-        </section>
-    </main>
+            <div class="menu">
+                <button>ROTAS</button>
+            </div>
+            <div class="main">
+                <div class="item">
+                    <div class="pin">
+                        <i class="fa-solid fa-location-pin"></i>
+                    </div>
+                    <div class="imagem" style="background: url(imgs/1.png);"></div>
+                    <div class="texto">
+                        <h1>Entregar celular</h1>
+                        <p>AVISAR POLÍCIA: <span>100%</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 <script src="script.js"></script>
+
 </html>

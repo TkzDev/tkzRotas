@@ -5,7 +5,7 @@ config.modulosRotas = {
 		-- ['mode'] = 'entregar', --[ENTREGAR / COLETAR]--
 		['callpolice'] = false, --[TRUE - ATIVA / FALSE - DESATIVA]--
 		['permissaopolicia'] = 'policia.permissao', --[PERMISSAO POLICIA CASO ATIVAR OPÇÃO DE CALLPOLICE]--
-        ['permissao'] = 'admin.permissao', --[PERMISSAO PARA ABRIR O PAINEL DE ROTAS]--
+        ['permissao'] = 'staff.permissao', --[PERMISSAO PARA ABRIR O PAINEL DE ROTAS]--
 		itens = { 
 			{
 				name = "Celular",
