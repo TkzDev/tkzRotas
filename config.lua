@@ -1,13 +1,12 @@
 config = {}
 
-
-config.framework = { ['framework'] = 'creative' } --[CREATIVE / VRPEX]-- 
+config.creative = true --[TRUE CASO SUA BASE SEJA CREATIVE"SUMMERZ"]
 
 config.modulosRotas = {
     ["armas1"] = {
 		['callpolice'] = false, --[TRUE - ATIVA / FALSE - DESATIVA]--
 		['permissaopolicia'] = 'Police', --[PERMISSAO POLICIA CASO ATIVAR OPÇÃO DE CALLPOLICE]--
-        ['permissao'] = 'a', --[PERMISSAO PARA ABRIR O PAINEL DE ROTAS,]--
+        ['permissao'] = 'Admin', --[PERMISSAO PARA ABRIR O PAINEL DE ROTAS,]--
 		itens = { 
 			{
 				name = "Celular",

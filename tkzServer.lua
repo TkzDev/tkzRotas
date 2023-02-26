@@ -21,21 +21,30 @@ src.checkPermission = function(currentRoute,permissao)
 	local source = source
 	local user_id = vRP.getUserId(source)
 	if user_id then
-		if vRP.hasGroup(user_id,config.modulosRotas[currentRoute].permissao) then
-			return true
-		else
-			TriggerClientEvent(config.moduloNotify['noPerm']['event'],source,config.moduloNotify['noPerm']['type'],config.moduloNotify['noPerm']['message'],config.moduloNotify['noPerm']['time'])
-			return false
+		if config.creative then
+			if vRP.hasGroup(user_id,config.modulosRotas[currentRoute].permissao) then
+				return true
+			else
+				TriggerClientEvent(config.moduloNotify['noPerm']['event'],source,config.moduloNotify['noPerm']['type'],config.moduloNotify['noPerm']['message'],config.moduloNotify['noPerm']['time'])
+				return false
+			end
+		else	
+			if vRP.hasPermission(user_id,config.modulosRotas[currentRoute].permissao) then
+				return true
+			else
+				TriggerClientEvent(config.moduloNotify['noPerm']['event'],source,config.moduloNotify['noPerm']['type'],config.moduloNotify['noPerm']['message'],config.moduloNotify['noPerm']['time'])
+				return false
+			end
 		end
 	end
 end
 
-function src.checkPayment(currentRoute, position)
+src.checkPayment = function(currentRoute, position)
 	local source = source
 	local user_id = vRP.getUserId(source)
 	local ped = GetPlayerPed(source)
 	if user_id then
-		if config.framework['framework'] == 'creative' then
+		if config.creative == true then
 			if src.checkPermission(currentRoute) then
 				for k,v in pairs(config.modulosRotas[currentRoute].itens) do
 					if ((k - 1) == tonumber(position)) then
@@ -95,6 +104,8 @@ function src.checkPayment(currentRoute, position)
 					end
 				end
 			end	
+		else
+			print('SUA BASE NÃO É CREATIVE')
 		end
 	end
 end
