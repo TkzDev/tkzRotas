@@ -1,11 +1,13 @@
 config = {}
 
+
+config.framework = { ['framework'] = 'creative' } --[CREATIVE / VRPEX]-- 
+
 config.modulosRotas = {
     ["armas1"] = {
-		-- ['mode'] = 'entregar', --[ENTREGAR / COLETAR]--
 		['callpolice'] = false, --[TRUE - ATIVA / FALSE - DESATIVA]--
-		['permissaopolicia'] = 'policia.permissao', --[PERMISSAO POLICIA CASO ATIVAR OPÇÃO DE CALLPOLICE]--
-        ['permissao'] = 'Admin', --[PERMISSAO PARA ABRIR O PAINEL DE ROTAS]--
+		['permissaopolicia'] = 'Police', --[PERMISSAO POLICIA CASO ATIVAR OPÇÃO DE CALLPOLICE]--
+        ['permissao'] = 'a', --[PERMISSAO PARA ABRIR O PAINEL DE ROTAS,]--
 		itens = { 
 			{
 				name = "Celular",
@@ -13,7 +15,7 @@ config.modulosRotas = {
 				avisarpolicia = '100%',
 				image = "celular",
 				quantidade = 1,
-				item = "celular"
+				item = "cellphone"
 			},
 			{
 				name = "Radio",
@@ -33,10 +35,6 @@ config.modulosRotas = {
 			}
 		}
 	}
-}
-
-config.moduloNotify = {
-	['startRoute'] = { ['event'] = 'Notify', ['type'] = 'sucesso', ['message'] = "Você iniciou a rota"}
 }
 
 config.moduloIniciarRotas = {
@@ -73,4 +71,11 @@ config.moduloColetarRotas = {
 		[21] = { ['x'] = 951.83, ['y'] = -1711.84, ['z'] = 30.49 }
     }
 }
+
+
+config.moduloNotify = {
+	['startRoute'] = { ['event'] = 'Notify', ['type'] = 'verde', ['message'] = "Você iniciou a rota"},
+	['noPerm'] = { ['event'] = 'Notify', ['type'] = 'vermelho', ['message'] = "Você não possui permissão para acessar esse painel!", ['time'] = 5000 }
+}
+
 return config
